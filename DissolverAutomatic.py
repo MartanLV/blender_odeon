@@ -14,7 +14,7 @@ ex = False
 for face in mesh.faces: #for a face
 	a = len(face.verts)
 	if a > 4: #allowed count of verts
-		print(a)
+		# print(a)
 		ex = True
 		face.select = True
 		bpy.ops.mesh.hide(unselected=True)
@@ -24,7 +24,7 @@ for face in mesh.faces: #for a face
 			print("---")
 			for t in a.link_edges:
 				i += 1
-				print(t)
+				# print(t)
 				if i != 2:
 					bpy.ops.mesh.select_all(action='TOGGLE')
 					a.select = True
