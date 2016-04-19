@@ -1,5 +1,6 @@
 import bpy,bmesh
 #http://www.blender.org/api/blender_python_api_2_67_release/bmesh.types.html
+
 mesh=bmesh.from_edit_mesh(bpy.context.object.data)
 sels = 0
 for v in mesh.edges:
@@ -45,3 +46,5 @@ for v in mesh.edges:
 # print('verts')
 print(sels)
 [bpy.ops.object.editmode_toggle() for _ in range(2)]#toggle twice
+
+

@@ -14,7 +14,7 @@ for f in mesh.faces:
     f.select = False
     for e in f.edges:
         if e.is_contiguous:
-            print(f)
+            print(f.index)
             f.select = True
             sels = True
             break

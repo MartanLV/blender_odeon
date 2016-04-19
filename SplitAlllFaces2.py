@@ -1,12 +1,4 @@
 import bpy,bmesh
-#http://www.blender.org/api/blender_python_api_2_67_release/bmesh.types.html
-
-#checks a face edges, if edge belongs to more faces, current face is splitted
-
-#http://www.blender.org/api/blender_python_api_2_67_release/bmesh.types.html
-
-
-
 def splitface():
     mesh=bmesh.from_edit_mesh(bpy.context.object.data)
     bpy.ops.mesh.select_all(action='TOGGLE')
@@ -28,7 +20,7 @@ def splitface():
         return sels
         break  # executed if 'continue' was skipped (break)
 
-while(splitface()):
+while(splitface()): 
     print('face split')
 
 print('nothing more to split')

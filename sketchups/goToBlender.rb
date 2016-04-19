@@ -32,7 +32,7 @@ def wrap(filename)
     # index='fasades-002'
     index=filename
     IO.write('/tmp/lastExport.txt', index)
-    IO.write('/Users/dacetiruma/oo-MARTINS-oo/260316-Rimi/BlenderTXT/%s.txt' % index, $facesInVects)
+    IO.write('/Users/x/oo-MARTINS-oo/260316-Rimi/BlenderTXT/%s.txt' % index, $facesInVects)
 end
 
 # wrap('fasades-001')

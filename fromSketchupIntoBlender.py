@@ -7,7 +7,7 @@ import bpy,bmesh,json
 mesh=bmesh.from_edit_mesh(bpy.context.object.data)
 e=open('/tmp/lastExport.txt','r')
 tmpName=e.read()
-jFile=open('/Users/dacetiruma/oo-MARTINS-oo/260316-Rimi/BlenderTXT/%s.txt' % tmpName,'r')
+jFile=open('/Users/x/oo-MARTINS-oo/260316-Rimi/BlenderTXT/%s.txt' % tmpName,'r')
 points=json.load(jFile)
 
 # 1in = 2.54cm a.k.a 127/50

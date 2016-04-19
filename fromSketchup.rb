@@ -3,16 +3,13 @@
 #Your recent operation has caused visible geometry to merge with existing geometry on a hidden layer
 #[ok] ?
 
-
 def exploderVerbose(l)
     puts "==========PASS %s" % [l]
     groups=[]
     # Sketchup.active_model.selection.each do |e|
-    Sketchup.active_model.entities.to_a.each do |e|
-        if e.sele
-            if e.is_a? Sketchup::Group
-                groups << e
-            end
+    Sketchup.active_model.selection.each do |e|
+        if e.is_a? Sketchup::Group
+            groups << e
         end
     end
     puts "+++++++++++GROUPS LENGTH %s" % [groups.length]
