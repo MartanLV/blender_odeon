@@ -36,14 +36,13 @@ mesh=bmesh.from_edit_mesh(obj)
 rems = [f for f in mesh.faces if f.calc_area() < 0.0001]
 bmesh.ops.delete(mesh, geom=rems, context=5)
 bmesh.update_edit_mesh(obj, True)
-
-[bpy.ops.object.editmode_toggle() for _ in range(2)]
 print(str(len(rems))+' noarea faces removed !')
 
 # zero verts remoe
 # zero verts remoe
 # zero verts remoe
-import bpy,bmesh
+# import bpy,bmesh
+
 m=bmesh.from_edit_mesh(bpy.context.object.data)
 x=0
 for v in m.verts:
@@ -54,7 +53,7 @@ for v in m.verts:
         v.select = False
 
 bpy.ops.mesh.delete(type='VERT')
-print( "%s <- floating vertexses deleted" % x) 
+print( "%s <- floating vertexses deleted" % x)
 
 # zero edges remoe
 # zero edges remoe
@@ -70,7 +69,7 @@ for ed in m1.edges:
         ed.select = False
 
 bpy.ops.mesh.delete(type='VERT')
-print( "%s <- floating edges deleted" % xx) 
+print( "%s <- floating edges deleted" % xx)
 
 # zero faces remove
 # zero faces remove
@@ -94,7 +93,7 @@ for face in mesh.faces:
 for i,x in enumerate(all):
     if x not in seen:seen.add(x)
     else:allobj[i].select = True;ex = False;
-[bpy.ops.object.editmode_toggle() for _ in range(2)]#toggle twice to refresh view
+
 
 if ex:
     print('no duplicated faces')
@@ -115,3 +114,4 @@ for face in mesh.faces: #for a face
         break
 
 print("<>LOG OUT<>")
+[bpy.ops.object.editmode_toggle() for _ in range(2)]#toggle twice to refresh view
