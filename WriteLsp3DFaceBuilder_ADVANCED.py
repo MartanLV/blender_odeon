@@ -1,25 +1,81 @@
-import bpy,bmesh
+import bpy, bmesh, os
+
 class BlendOneLisp():
+    @staticmethod
+    def namespace_opts(prefix, name, opts):
+        opts["function_call"] = "func_" + prefix + "_" + name
+        opts["filepath"] = prefix + "_" + name + ".lsp"
+        opts["acad_layer"] = name
+        return opts
+
+    @staticmethod
+    def preset_aist_opts():
+        return {
+            "cad3dpoly": True,
+            "units": 1000,
+        }
+        
+    @staticmethod
+    def preset_odeon_opts():
+        return {
+            "cad3dpoly": False,
+            "units": 1,
+        }
+
+    @staticmethod
+    def preset(prefix):
+        print("\n\n\n\n #\n # preset_" + prefix + ": \n #")
+        opts = getattr(__class__, "preset_" + prefix + "_opts")()
+        runner = __class__()
+        feedback = []
+        scene = bpy.context.scene
+        for obj in scene.objects:
+            if obj.type == 'MESH':
+                opts = __class__.namespace_opts(prefix, obj.name, opts)
+                print("Runnin' obj: \"" + obj.name)
+                lispLoadStr = runner.run(obj, opts)
+                feedback.append(lispLoadStr)
+        print("\n\n\n\n #\n # paste this in acad cmd: \n #")
+        print("##########################################\n\n")
+        print("\n".join(feedback))
+        print("\n\n##########################################")
+        print("### -- done -- ###")
+
+        
+    @staticmethod
+    def preset_odeon():
+        __class__.preset("odeon")
+
+    @staticmethod
+    def preset_aist():
+        __class__.preset("aist")
+    
     def __init__(self, opts = {}):
-        print("INIT")
-        self.opts = {
-            "cad3dpoly":False, # use 3d poly command
+        self.opts = { # defaults
+            "cad3dpoly":True, # use 3d poly command
             "cad3face":True, # use 3d face command
             "_flipZ":False, # flip Zed axis upon export >> not often needed
             "units":1000, #enlarge values if autocad is set in milimeters
-            "function_call":'zidafabrika03',
-            "filepath":'zidafabrika03.lsp', #must be lsp for aCad
+            "function_call":'function_call',
+            "filepath":'filepath_dated.lsp', #must be lsp for aCad
             "resolution":3,
+            "acad_layer": "new_layer"
         }
-        self.mesh = bmesh.from_edit_mesh(bpy.context.object.data)
 
+    def run(self, obj, opts = {}):
         self.opts.update(opts)
-        self.run()
-        print("done")
-
-    def run(self):
         line = '(defun c:'+self.opts["function_call"]+'()'
-        for p in self.mesh.faces:
+        line += '(command "DELAY" 500)'
+        line += '(command "._layer" "_M" "'+self.opts["acad_layer"]+'" "")'
+        line += '(command "DELAY" 500)'
+
+        bm = bmesh.new()
+        context = bpy.context
+        scene = context.scene
+        mesh = obj.to_mesh(scene, False, 'PREVIEW')
+        bm.from_mesh(mesh)
+        # mesh = bmesh.from_edit_mesh(bpy.context.object.data)
+        for p in bm.faces:
             if self.opts["cad3face"] and len(p.verts) > 4:
                 s="!!!! got extra verts on face"
                 print("---------\n%s\n---------" % s)
@@ -50,7 +106,10 @@ class BlendOneLisp():
         line += ')'
         fo = open(self.opts["filepath"], 'w+')
         fo.write( line )
+        
         fo.close()
+
+        return '(load "' + os.path.realpath(fo.name) + '")\n' + opts["function_call"]
 
     def prep(self, elem): #apply transforms
         if self.opts["_flipZ"]:
@@ -60,10 +119,6 @@ class BlendOneLisp():
     def multby(self, elem): 
         return round(elem * self.opts["units"],self.opts["resolution"])
 
-BlendOneLisp({
-    "cad3dpoly":True,
-    "function_call":"KLASE",
-    "filepath":"KLASE.lsp",
-    "units":1,
-    "resolution":3,
-})
+
+BlendOneLisp.preset_odeon()
+# BlendOneLisp.preset_aist()
