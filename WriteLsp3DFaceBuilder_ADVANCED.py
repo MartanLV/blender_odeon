@@ -12,6 +12,8 @@ class BlendOneLisp():
     @staticmethod
     def preset_aist_opts():
         return {
+            "preset": "aist",
+            "cad3face": True,
             "cad3dpoly": True,
             "units": 0.001
         }
@@ -19,6 +21,7 @@ class BlendOneLisp():
     @staticmethod
     def preset_odeon_opts():
         return {
+            "preset": "odeon",
             "cad3dpoly": False,
             "units": 1,
         }
@@ -60,7 +63,8 @@ class BlendOneLisp():
             "function_call":'function_call',
             "filepath":'filepath_dated.lsp', #must be lsp for aCad
             "resolution":3,
-            "acad_layer": "new_layer"
+            "acad_layer": "new_layer",
+            "preset": "x"
         }
 
     def run(self, obj, opts = {}):
@@ -80,9 +84,9 @@ class BlendOneLisp():
         # mesh = bmesh.from_edit_mesh(bpy.context.object.data)
         for p in bm.faces:
             f += 1
-            if self.opts["cad3face"] and len(p.verts) > 4:
+            if self.opts["cad3face"] and len(p.verts) > 4 and self.opts["preset"] != "aist":
                 s="!!!! got extra verts on face"
-                print("---------\n%s\n---------" % s)
+                print("---------\n%s\n---------" % s, len(p.verts))
             if len(p.verts) == 4 and self.opts["cad3face"]: #3dface can have 4points MAX ( 3point have different spacings )
                 line+='(command "._3dface" '
                 for v in p.verts:
@@ -96,6 +100,9 @@ class BlendOneLisp():
                     line+='"'+exp+'" '
                 line += '"" "")'
             elif self.opts["cad3dpoly"]: #fallback to 3d polyline
+                if self.opts["preset"] == "aist" and len(p.verts) > 28:
+                    print("Exceeded 28 vertexes AIST limit: ", len(p.verts))
+
                 line+='(command "._3dpoly" '
                 for v in p.verts:
                     exp = ','.join(map(str,map(self.multby,self.prep(v.co))))
@@ -125,5 +132,5 @@ class BlendOneLisp():
         return round(elem * self.opts["units"],self.opts["resolution"])
 
 
-# BlendOneLisp.preset_odeon()
+#BlendOneLisp.preset_odeon()
 BlendOneLisp.preset_aist()
