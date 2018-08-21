@@ -1,6 +1,7 @@
 import bpy, bmesh, os
 
 class BlendOneLisp():
+    faces = 0
     @staticmethod
     def namespace_opts(prefix, name, opts):
         opts["function_call"] = "func_" + prefix + "_" + name
@@ -12,7 +13,7 @@ class BlendOneLisp():
     def preset_aist_opts():
         return {
             "cad3dpoly": True,
-            "units": 1000,
+            "units": 0.001
         }
         
     @staticmethod
@@ -39,7 +40,7 @@ class BlendOneLisp():
         print("##########################################\n\n")
         print("\n".join(feedback))
         print("\n\n##########################################")
-        print("### -- done -- ###")
+        print("### -- done -- ### Faces: ", BlendOneLisp.faces)
 
         
     @staticmethod
@@ -74,8 +75,11 @@ class BlendOneLisp():
         scene = context.scene
         mesh = obj.to_mesh(scene, False, 'PREVIEW')
         bm.from_mesh(mesh)
+
+        f = 0
         # mesh = bmesh.from_edit_mesh(bpy.context.object.data)
         for p in bm.faces:
+            f += 1
             if self.opts["cad3face"] and len(p.verts) > 4:
                 s="!!!! got extra verts on face"
                 print("---------\n%s\n---------" % s)
@@ -108,7 +112,8 @@ class BlendOneLisp():
         fo.write( line )
         
         fo.close()
-
+        print("faces: ", f)
+        BlendOneLisp.faces += f
         return '(load "' + os.path.realpath(fo.name) + '")\n' + opts["function_call"]
 
     def prep(self, elem): #apply transforms
@@ -120,5 +125,5 @@ class BlendOneLisp():
         return round(elem * self.opts["units"],self.opts["resolution"])
 
 
-BlendOneLisp.preset_odeon()
-# BlendOneLisp.preset_aist()
+# BlendOneLisp.preset_odeon()
+BlendOneLisp.preset_aist()
