@@ -1,5 +1,6 @@
 import bpy, bmesh, os
 
+" aist has problem with 'pseudo' carved holes in plane.
 class BlendOneLisp():
     faces = 0
     @staticmethod
